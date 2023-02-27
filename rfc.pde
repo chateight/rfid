@@ -52,14 +52,9 @@ void setup(){
 }
 
 void draw(){
-  // DB table update if new data is available
-  if (name == null | name == ""){
-    name = "undefined";
-  } else{
-    dbTableUpdate();
-  }
-
   background(128);
+  
+  dbTableGet();
 
   myFont = createFont("MicrosoftSansSerif", 30);
   textFont(myFont, 30);
@@ -88,6 +83,13 @@ void draw(){
 void serialEvent(Serial p){
   inString = p.readString().trim();
   name = uid.get(inString);
+  // DB table update if new data is available
+  if (name == null | name == ""){
+    name = "undefined";
+  } else{
+    dbTableUpdate();
+  }
+
 }
 
 void dbTableCreate(){
@@ -96,7 +98,7 @@ void dbTableCreate(){
     connection = DriverManager.getConnection("jdbc:sqlite:" + dbName); 
     Statement statement = connection.createStatement();
     statement.setQueryTimeout(5);
-    statement.executeUpdate("drop table if exists " + tName);
+    //statement.executeUpdate("drop table if exists " + tName);
     statement.executeUpdate("create table if not exists " + tName + " (id string primary key, name, stat int)");
     // to insert element form the StringDict
     for (String k : uid.keys()) {
@@ -123,16 +125,6 @@ void dbTableUpdate(){
     statement.setQueryTimeout(5);
     // to update stat
     statement.executeUpdate("update " + tName + " set stat = 1 where id = '" + inString + "'");
-    ResultSet rs = statement.executeQuery("select * from " + tName);
-    while(rs.next()){ 
-    }
-    // to get active members
-    String[] zero = {};  // to clear the String[] members
-    members = zero;
-    rs = statement.executeQuery("select * from " + tName + " where stat = 1");
-    while(rs.next()){
-      members = append(members, rs.getString("name"));
-    }
   } catch( SQLException e ){
     println(e.getCause());
   } finally{
@@ -147,6 +139,8 @@ void dbTableGet(){
     Statement statement = connection.createStatement();
     statement.setQueryTimeout(5);
     // to get active members
+    String[] zero = {};
+    members = zero;
     ResultSet rs = statement.executeQuery("select * from " + tName + " where stat = 1");
     while(rs.next()){
       members = append(members, rs.getString("name"));
