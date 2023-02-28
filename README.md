@@ -12,3 +12,5 @@ like,
 
 uid = new StringDict();
 uid.set("UID", "name");
+
+STL files : case for the M5Stick & the senor
