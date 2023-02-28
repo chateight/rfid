@@ -14,9 +14,9 @@ PFont myFont;
 int lf = 10;
 
 int xStart = 100;    // member indication rect cordinate
-int yStart = 60;
+int yStart = 120;
 int xStep = 240;
-int yStep = 120;
+int yStep = 150;
 int xSize = 140;
 int ySize = 100;
 int xMax = 600;
@@ -36,7 +36,7 @@ void setup(){
   dbTableCreate();
   dbTableGet();
   
-  size(800, 600);
+  size(800, 750);
   // com port search
   int num = comPort.length;
   for (int i=0; i<num; i++) {
@@ -60,6 +60,7 @@ void draw(){
   textFont(myFont, 30);
   fill(255);
   text(name, 20, 30);
+  text("『さんか』しているニンジャ", 250, 80);
   fill(100, 200, 256);
 
   int x, y;
@@ -100,15 +101,14 @@ void dbTableCreate(){
     statement.setQueryTimeout(5);
     //statement.executeUpdate("drop table if exists " + tName);
     statement.executeUpdate("create table if not exists " + tName + " (id string primary key, name, stat int)");
-    // to insert element form the StringDict
-    for (String k : uid.keys()) {
-      String s = uid.get(k);
-      statement.executeUpdate("insert into " + tName + " values('" + k + "','" + s + "', 0)");
-    }    
+    // to check the table is empty(created) or not(already existed)
     ResultSet rs = statement.executeQuery("select * from " + tName);
-    while(rs.next()){ 
-      //String format = "name: %s, id: %s, stat: %d";
-      //println(String.format(format, rs.getString("name"), rs.getString("id"), rs.getInt("stat")));
+    if (!rs.next()){
+    // to insert element from the StringDict
+      for (String k : uid.keys()) {
+        String s = uid.get(k);
+        statement.executeUpdate("insert into " + tName + " values('" + k + "','" + s + "', 0)");
+      }
     }
   } catch( SQLException e ){
     println(e.getCause());
@@ -124,7 +124,7 @@ void dbTableUpdate(){
     Statement statement = connection.createStatement();
     statement.setQueryTimeout(5);
     // to update stat
-    statement.executeUpdate("update " + tName + " set stat = 1 where id = '" + inString + "'");
+    statement.executeUpdate("update " + tName + " set stat = 1, name = '" + name + "' where id = '" + inString + "'");
   } catch( SQLException e ){
     println(e.getCause());
   } finally{
@@ -139,6 +139,7 @@ void dbTableGet(){
     Statement statement = connection.createStatement();
     statement.setQueryTimeout(5);
     // to get active members
+    // member list clear before get
     String[] zero = {};
     members = zero;
     ResultSet rs = statement.executeQuery("select * from " + tName + " where stat = 1");
