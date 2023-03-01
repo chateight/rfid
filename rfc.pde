@@ -1,5 +1,5 @@
 /*
- receive M5Stick RF car read data and manipulate it as a registration data
+ receive M5Stick RF card read data and manipulate it as a registration data
  SQLite is used for Data Base table
 */
 import processing.serial.*;
