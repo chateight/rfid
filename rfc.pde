@@ -1,3 +1,7 @@
+//
+// receive M5Stick RF car read data and manipulate it as a registration data
+// SQLite is used for Data Base table
+//
 import processing.serial.*;
 import java.sql.*;
 
