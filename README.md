@@ -14,3 +14,5 @@ uid = new StringDict();
 uid.set("UID", "name");
 
 STL files : case for the M5Stick & the senor
+
+"src" directry is for M5Stickc plus code and library
